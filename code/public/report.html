@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="th">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>รายงานยอดขาย | Pad-Krapow Cafe POS</title>
+  <link rel="stylesheet" href="css/style.css">
+  <script src="js/common.js" defer></script>
+  <script src="js/report.js" defer></script>
+</head>
+<body>
+  <div class="app">
+    <header class="topbar" id="topbar"></header>
+    <nav class="sidenav" id="sidenav"></nav>
+    <main class="main">
+      <div class="page-head">
+        <h1>รายงานยอดขาย</h1>
+        <div class="tabs" role="tablist" aria-label="ประเภทรายงาน">
+          <button type="button" class="tab" role="tab" id="tab-daily" aria-controls="panel-daily" aria-selected="true" aria-pressed="true">รายวัน / ช่วงวันที่</button>
+          <button type="button" class="tab" role="tab" id="tab-monthly" aria-controls="panel-monthly" aria-selected="false" aria-pressed="false">รายเดือน</button>
+        </div>
+      </div>
+
+      <!-- รายงานรายวัน (FR-06 / US-07) -->
+      <section id="panel-daily" role="tabpanel" aria-labelledby="tab-daily">
+        <form class="card card-pad filters" id="daily-form" novalidate>
+          <div class="field">
+            <label for="from">จากวันที่</label>
+            <input class="input" type="date" id="from" required>
+          </div>
+          <div class="field">
+            <label for="to">ถึงวันที่</label>
+            <input class="input" type="date" id="to" required>
+          </div>
+          <button type="submit" class="btn btn-primary">⟳ ดูรายงาน</button>
+          <button type="button" class="btn" data-range="today">วันนี้</button>
+          <button type="button" class="btn" data-range="yesterday">เมื่อวาน</button>
+          <button type="button" class="btn" data-range="7">7 วันล่าสุด</button>
+          <div class="field-error" id="daily-error" role="alert"></div>
+        </form>
+
+        <div class="stats">
+          <div class="card card-pad stat"><div class="label">💰 ยอดขายรวม</div><div class="value"><span id="d-total">-</span> บาท</div></div>
+          <div class="card card-pad stat"><div class="label">🧾 จำนวนออเดอร์</div><div class="value" id="d-orders">-</div></div>
+          <div class="card card-pad stat"><div class="label">🏷 เฉลี่ย/ออเดอร์</div><div class="value"><span id="d-avg">-</span> บาท</div></div>
+        </div>
+
+        <div class="two-col">
+          <div>
+            <h2 class="section-title">ยอดขายแยกตามเมนู <span class="muted" id="d-range"></span></h2>
+            <div class="card table-wrap">
+              <table>
+                <thead><tr><th>#</th><th>เมนู</th><th class="num">จำนวนที่ขาย</th><th class="num">ยอดขาย (บาท)</th></tr></thead>
+                <tbody id="d-rows"></tbody>
+              </table>
+            </div>
+          </div>
+          <div>
+            <h2 class="section-title">ออเดอร์ของวันที่ <span id="o-date"></span></h2>
+            <div class="card table-wrap">
+              <table>
+                <thead><tr><th>เลขที่</th><th>เวลา</th><th>ชำระ</th><th class="num">ยอด</th></tr></thead>
+                <tbody id="o-rows"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- รายงานรายเดือน (FR-07 / US-08) -->
+      <section id="panel-monthly" role="tabpanel" aria-labelledby="tab-monthly" class="hidden">
+        <form class="card card-pad filters" id="monthly-form" novalidate>
+          <div class="field">
+            <label for="month">เดือน</label>
+            <input class="input" type="month" id="month" required>
+          </div>
+          <button type="submit" class="btn btn-primary">⟳ ดูรายงาน</button>
+          <div class="field-error" id="monthly-error" role="alert"></div>
+        </form>
+
+        <div class="stats">
+          <div class="card card-pad stat"><div class="label">💰 ยอดขายรวมทั้งเดือน</div><div class="value"><span id="m-total">-</span> บาท</div></div>
+          <div class="card card-pad stat"><div class="label">🧾 จำนวนออเดอร์</div><div class="value" id="m-orders">-</div></div>
+          <div class="card card-pad stat"><div class="label">🏷 เฉลี่ย/ออเดอร์</div><div class="value"><span id="m-avg">-</span> บาท</div></div>
+        </div>
+
+        <div class="two-col">
+          <div>
+            <h2 class="section-title">ยอดขายรายวันในเดือน</h2>
+            <div class="card card-pad">
+              <div class="chart" id="m-chart" role="img" aria-label="กราฟยอดขายรายวัน"></div>
+              <div class="chart-labels" id="m-chart-labels" aria-hidden="true"></div>
+            </div>
+          </div>
+          <div>
+            <h2 class="section-title">เมนูขายดี 5 อันดับแรก</h2>
+            <div class="card table-wrap">
+              <table>
+                <thead><tr><th>อันดับ</th><th>เมนู</th><th class="num">จำนวน</th><th class="num">ยอดขาย</th></tr></thead>
+                <tbody id="m-top"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+</body>
+</html>

@@ -1,0 +1,28 @@
+sequenceDiagram
+  autonumber
+  actor O as เจ้าของร้าน
+  participant UI as หน้ารายงาน (report.js)
+  participant C as reportController
+  participant M as ReportModel
+  participant DB as MySQL
+
+  O->>UI: เลือกสาขา และช่วงวันที่ แล้วกด "ดูรายงาน"
+  UI->>UI: ตรวจว่ากรอกครบ และวันสิ้นสุดไม่ก่อนวันเริ่ม
+  UI->>C: GET /api/reports/sales?branchId=&from=&to= (Bearer token)
+  C->>C: resolveBranchId() ตรวจสิทธิ์สาขา
+  alt วันที่ผิดรูปแบบ / ไม่มีจริง / ช่วงเกิน 366 วัน
+    C-->>UI: 400 {error}
+    UI-->>O: แสดงข้อความใต้ฟอร์ม
+  else ข้อมูลถูกต้อง
+    par สรุปยอด
+      C->>M: getSummary(branchId, from, to+1)
+      M->>DB: SELECT SUM(total_amount), COUNT(*) FROM orders WHERE ...
+    and แยกตามเมนู
+      C->>M: getSalesByMenu(branchId, from, to+1)
+      M->>DB: SELECT ... SUM(quantity), SUM(quantity*unit_price) GROUP BY menu
+    end
+    DB-->>M: ผลรวม
+    M-->>C: ข้อมูลรายงาน
+    C-->>UI: 200 {totalSales, orderCount, averagePerOrder, items[]}
+    UI-->>O: การ์ดสรุป 3 ใบ + ตารางเมนู (อันดับ 1 = ขายดีที่สุด)
+  end

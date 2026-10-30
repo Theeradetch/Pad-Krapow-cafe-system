@@ -1,0 +1,61 @@
+erDiagram
+  BRANCH ||--o{ EMPLOYEE : employs
+  BRANCH ||--o{ MENU_ITEM : contains
+  BRANCH ||--o{ ORDERS : receives
+  CATEGORY ||--o{ MENU_ITEM : classifies
+  EMPLOYEE ||--o{ ORDERS : processes
+  ORDERS ||--|{ ORDER_ITEM : contains
+  MENU_ITEM ||--o{ ORDER_ITEM : "included in"
+  MENU_ITEM ||--o{ STOCK_MOVEMENT : tracks
+  ORDERS |o--o{ STOCK_MOVEMENT : causes
+
+  BRANCH {
+    int branch_id PK
+    string name
+    string address
+  }
+  CATEGORY {
+    int category_id PK
+    string name UK
+  }
+  EMPLOYEE {
+    int employee_id PK
+    int branch_id FK
+    string name
+    string role "barista | owner"
+    string username UK
+    string password_hash "bcrypt"
+  }
+  MENU_ITEM {
+    int menu_id PK
+    int branch_id FK
+    int category_id FK
+    string name
+    decimal price "CHECK >= 0"
+    int stock_quantity "CHECK >= 0"
+    int low_stock_threshold "default 10"
+    boolean is_active "soft delete"
+  }
+  ORDERS {
+    int order_id PK
+    int branch_id FK
+    int employee_id FK
+    string payment_method "cash | transfer | promptpay"
+    decimal total_amount
+    datetime created_at
+  }
+  ORDER_ITEM {
+    int order_item_id PK
+    int order_id FK
+    int menu_id FK
+    int quantity "CHECK > 0"
+    decimal unit_price "ราคา ณ เวลาขาย"
+  }
+  STOCK_MOVEMENT {
+    int movement_id PK
+    int menu_id FK
+    int order_id FK "NULL ได้"
+    int quantity_change "ลบ=ตัด บวก=เติม"
+    string reason "sale | restock | adjust"
+    datetime moved_at
+  }

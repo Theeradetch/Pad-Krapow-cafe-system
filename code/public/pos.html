@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="th">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>ขายสินค้า | Pad-Krapow Cafe POS</title>
+  <link rel="stylesheet" href="css/style.css">
+  <script src="js/common.js" defer></script>
+  <script src="js/pos.js" defer></script>
+</head>
+<body>
+  <div class="app">
+    <header class="topbar" id="topbar"></header>
+    <nav class="sidenav" id="sidenav"></nav>
+    <main class="main">
+      <div class="page-head">
+        <h1>รับออเดอร์</h1>
+        <span class="muted" id="sync-status" aria-live="polite"></span>
+      </div>
+
+      <div id="low-stock-alert" class="alert alert-warn hidden" role="status"></div>
+
+      <div class="pos">
+        <section aria-labelledby="menu-heading">
+          <h2 id="menu-heading" class="sr-only">รายการเมนู</h2>
+          <div class="pos-tools">
+            <label class="sr-only" for="menu-search">ค้นหาเมนู</label>
+            <input class="input" id="menu-search" type="search" placeholder="🔍 ค้นหาเมนู...">
+          </div>
+          <div class="tabs" id="category-tabs" role="group" aria-label="หมวดหมู่"></div>
+          <div class="menu-grid" id="menu-grid" aria-live="polite"></div>
+        </section>
+
+        <aside class="card cart" aria-labelledby="cart-heading">
+          <div class="cart-head">
+            <h2 id="cart-heading">ตะกร้า</h2>
+            <span class="muted" id="cart-count">0 รายการ</span>
+          </div>
+          <div class="cart-body" id="cart-body"></div>
+          <div class="cart-foot">
+            <div class="total-row">
+              <span>ยอดรวม</span>
+              <span class="amount"><span id="cart-total">0</span> บาท</span>
+            </div>
+            <fieldset class="pay-options" id="pay-options">
+              <legend>วิธีชำระเงิน</legend>
+              <label class="pay-option"><input type="radio" name="payment" value="cash"><span>💵<br>เงินสด</span></label>
+              <label class="pay-option"><input type="radio" name="payment" value="transfer"><span>🏦<br>โอนเงิน</span></label>
+              <label class="pay-option"><input type="radio" name="payment" value="promptpay"><span>📱<br>QR พร้อมเพย์</span></label>
+            </fieldset>
+            <div class="confirm-hint" id="confirm-hint"></div>
+            <div class="cart-actions">
+              <button type="button" class="btn btn-danger btn-lg" id="clear-btn">ยกเลิก</button>
+              <button type="button" class="btn btn-primary btn-lg" id="confirm-btn" disabled>✓ ยืนยันออเดอร์</button>
+            </div>
+          </div>
+        </aside>
+      </div>
+    </main>
+  </div>
+</body>
+</html>

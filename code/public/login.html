@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="th">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>เข้าสู่ระบบ | Pad-Krapow Cafe POS</title>
+  <link rel="stylesheet" href="css/style.css">
+  <script src="js/common.js" defer></script>
+  <script src="js/login.js" defer></script>
+</head>
+<body>
+  <main class="login-page">
+    <div class="card card-pad login-card">
+      <div class="brand">
+        <div class="logo-mark" aria-hidden="true">☕</div>
+        <h1>Pad-Krapow Cafe POS</h1>
+        <p class="muted">เข้าสู่ระบบเพื่อเริ่มรับออเดอร์</p>
+      </div>
+      <form id="login-form" novalidate>
+        <div class="field">
+          <label for="username">ชื่อผู้ใช้</label>
+          <input class="input" id="username" name="username" autocomplete="username" required maxlength="50">
+        </div>
+        <div class="field">
+          <label for="password">รหัสผ่าน</label>
+          <input class="input" id="password" name="password" type="password" autocomplete="current-password" required maxlength="100">
+        </div>
+        <div class="field-error" id="login-error" role="alert"></div>
+        <button class="btn btn-primary btn-lg btn-block" type="submit" id="login-btn">เข้าสู่ระบบ</button>
+      </form>
+    </div>
+  </main>
+</body>
+</html>

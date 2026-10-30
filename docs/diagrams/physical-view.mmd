@@ -1,0 +1,16 @@
+flowchart TB
+  subgraph C["เครื่องลูกข่าย — แท็บเล็ตหน้าร้าน / คอมพิวเตอร์เจ้าของร้าน"]
+    br["เว็บเบราว์เซอร์ (Chrome / Safari / Edge)<br/>login · pos · menu · report · receipt<br/>ดึงสต็อกใหม่ทุก 3 วินาที"]
+  end
+    subgraph A["คอมพิวเตอร์หลังร้าน: Application Server — Node.js 20+ / Express 5 (port 3000)"]
+      app["src/server.js → app.js<br/>static files · routes · middleware/auth.js<br/>controllers · models"]
+      pool["config/db.js<br/>mysql2 Connection Pool (10 connections, timezone +07:00)"]
+    end
+    subgraph D["เครื่องเดียวกัน: Database Server — MySQL 8.0 / MariaDB 10.5+ (port 3306)"]
+      db[("pad_krapow_cafe<br/>branch · employee · category · menu_item<br/>orders · order_item · stock_movement")]
+    end
+  printer["เครื่องพิมพ์ใบเสร็จ<br/>(พิมพ์ผ่านเบราว์เซอร์)"]
+  br -- "HTTP + JSON ผ่าน WiFi ของร้าน<br/>Authorization: Bearer JWT" --> app
+  app --> pool
+  pool -- "SQL (parameterized) + transaction" --> db
+  br -. "window.print()" .-> printer

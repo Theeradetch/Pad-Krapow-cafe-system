@@ -1,0 +1,48 @@
+flowchart TB
+  subgraph P["Presentation Layer — code/public (HTML / CSS / JavaScript)"]
+    direction LR
+    login["login.html<br/>login.js"]
+    pos["pos.html<br/>pos.js"]
+    menu["menu.html<br/>menu.js"]
+    report["report.html<br/>report.js"]
+    receipt["receipt.html<br/>receipt.js"]
+    common["js/common.js<br/>api() · initShell() · renderReceipt()"]
+  end
+
+  subgraph A["Application — code/src (Node.js + Express 5)"]
+    direction TB
+    appjs["app.js / server.js<br/>security headers · static · error handler"]
+    subgraph RT["routes/"]
+      direction LR
+      r1["authRoutes"] --- r2["branchRoutes"] --- r3["menuRoutes"] --- r4["orderRoutes"] --- r5["reportRoutes"]
+    end
+    mw["middleware/auth.js<br/>authenticate · requireRole · resolveBranchId"]
+    subgraph CT["controllers/  (ตรวจข้อมูลนำเข้า + กติกาธุรกิจ)"]
+      direction LR
+      c1["authController"] --- c2["branchController"] --- c3["menuController"] --- c4["orderController"] --- c5["reportController"]
+    end
+    subgraph MD["models/  (เข้าถึงข้อมูล)"]
+      direction LR
+      m1["employeeModel"] --- m2["menuModel"] --- m3["orderModel<br/>transaction + FOR UPDATE"] --- m4["reportModel"]
+      dom["Order.js<br/>Order · OrderItem (domain)"]
+    end
+    util["utils/validate.js · utils/errors.js"]
+    cfg["config/db.js<br/>mysql2 Connection Pool"]
+  end
+
+  db[("MySQL 8 / MariaDB<br/>db/schema.sql — 7 ตาราง")]
+  tests["test/ (node:test + supertest)<br/>41 test cases"]
+  setup["scripts/setup-db.js<br/>สร้างฐานข้อมูล + ข้อมูลตั้งต้น"]
+
+  P -- "HTTP / JSON (fetch + Bearer token)" --> appjs
+  appjs --> RT
+  RT --> mw
+  mw --> CT
+  CT --> MD
+  CT --> util
+  m3 --> dom
+  c4 --> dom
+  MD --> cfg
+  cfg -- "SQL" --> db
+  setup --> db
+  tests -. "ทดสอบผ่าน app.js" .-> appjs

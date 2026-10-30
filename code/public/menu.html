@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="th">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>เมนูและสต็อก | Pad-Krapow Cafe POS</title>
+  <link rel="stylesheet" href="css/style.css">
+  <script src="js/common.js" defer></script>
+  <script src="js/menu.js" defer></script>
+</head>
+<body>
+  <div class="app">
+    <header class="topbar" id="topbar"></header>
+    <nav class="sidenav" id="sidenav"></nav>
+    <main class="main">
+      <div class="page-head">
+        <h1>จัดการเมนูและสต็อก</h1>
+        <button type="button" class="btn btn-primary hidden" id="add-btn">＋ เพิ่มเมนู</button>
+      </div>
+
+      <div id="low-stock-alert" class="alert alert-warn hidden" role="status"></div>
+
+      <div class="pos-tools">
+        <label class="sr-only" for="menu-search">ค้นหาเมนู</label>
+        <input class="input" id="menu-search" type="search" placeholder="🔍 ค้นหาเมนู...">
+        <label class="tab" for="low-only"><input type="checkbox" id="low-only"> แสดงเฉพาะที่ใกล้หมด</label>
+      </div>
+
+      <div class="card table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>เมนู</th>
+              <th>หมวดหมู่</th>
+              <th class="num">ราคา (บาท)</th>
+              <th class="num">สต็อก</th>
+              <th class="num">ขั้นต่ำแจ้งเตือน</th>
+              <th>การจัดการ</th>
+            </tr>
+          </thead>
+          <tbody id="menu-rows"></tbody>
+        </table>
+      </div>
+      <p class="muted" id="role-note"></p>
+    </main>
+  </div>
+</body>
+</html>

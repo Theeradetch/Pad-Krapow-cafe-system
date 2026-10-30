@@ -1,0 +1,60 @@
+classDiagram
+  direction LR
+  class Order {
+    -orderId
+    -items : OrderItem[]
+    +addItem(menuId, quantity, unitPrice)
+    +removeItem(index)
+    +calculateTotal() number
+  }
+  class OrderItem {
+    -menuId
+    -quantity
+    -unitPrice
+    +getSubtotal() number
+  }
+  class MenuItem {
+    -menuId
+    -name
+    -price
+    -stockQuantity
+    -lowStockThreshold
+    -isActive
+  }
+  class Category {
+    -categoryId
+    -name
+  }
+  class Branch {
+    -branchId
+    -name
+    -address
+  }
+  class Employee {
+    -employeeId
+    -name
+    -role : barista|owner
+    -username
+    -passwordHash
+  }
+  class StockMovement {
+    -movementId
+    -quantityChange
+    -reason : sale|restock|adjust
+    -movedAt
+  }
+  class Payment {
+    <<enumeration>>
+    cash
+    transfer
+    promptpay
+  }
+  Order "1" *-- "1..*" OrderItem : composition
+  OrderItem "*" --> "1" MenuItem
+  MenuItem "*" --> "1" Category
+  Branch "1" o-- "*" MenuItem
+  Branch "1" o-- "*" Employee
+  Employee "1" --> "*" Order : บันทึก
+  Order --> Payment
+  MenuItem "1" --> "*" StockMovement
+  Order "0..1" --> "*" StockMovement : ทำให้เกิด

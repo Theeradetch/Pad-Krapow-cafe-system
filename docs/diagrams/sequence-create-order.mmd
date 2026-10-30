@@ -1,0 +1,50 @@
+sequenceDiagram
+  autonumber
+  actor S as พนักงาน
+  participant UI as หน้าจอ POS (pos.js)
+  participant R as orderRoutes + auth
+  participant C as orderController
+  participant M as OrderModel
+  participant DB as MySQL
+
+  S->>UI: เลือกเมนู / จำนวน / วิธีชำระเงิน
+  Note over UI: ปุ่มยืนยันกดได้เมื่อมีรายการ ≥ 1<br/>ไม่เกินสต็อก และเลือกวิธีชำระแล้ว
+  S->>UI: กด "ยืนยันออเดอร์"
+  UI->>R: POST /api/orders {branchId, paymentMethod, items[{menuId, quantity}]}<br/>Authorization: Bearer token
+  alt token ไม่ถูกต้อง / หมดอายุ
+    R-->>UI: 401 Unauthorized
+  else บาริสต้าส่ง branchId ของสาขาอื่น
+    R-->>UI: 403 Forbidden
+  else ผ่านการยืนยันตัวตน
+    R->>C: createOrder(req) — employeeId มาจาก token
+    alt ข้อมูลนำเข้าไม่ถูกต้อง
+      C-->>UI: 400 {error}
+    else ข้อมูลถูกต้อง
+      C->>C: Order.addItem() รวมเมนูซ้ำ
+      C->>M: createOrder(branchId, employeeId, paymentMethod, items)
+      M->>DB: BEGIN
+      M->>DB: SELECT ... FROM menu_item WHERE menu_id IN (...) AND branch_id = ? FOR UPDATE
+      DB-->>M: ราคา / สต็อก / ขั้นต่ำ (ล็อกแถวไว้)
+      alt ไม่พบเมนู หรือ สต็อกไม่พอ
+        M->>DB: ROLLBACK
+        M-->>C: AppError 400
+        C-->>UI: 400 {error: "สต็อกไม่เพียงพอ...", details}
+        UI-->>S: แสดงข้อความ และโหลดสต็อกใหม่
+      else สต็อกพอทุกเมนู
+        M->>M: Order.calculateTotal() จากราคาในฐานข้อมูล
+        M->>DB: INSERT INTO orders (..., total_amount)
+        loop ทุกรายการ
+          M->>DB: INSERT INTO order_item
+          M->>DB: UPDATE menu_item SET stock_quantity = stock_quantity - ?
+          M->>DB: INSERT INTO stock_movement (reason = 'sale')
+        end
+        M->>M: หาเมนูที่สต็อกใหม่ < low_stock_threshold
+        M->>DB: COMMIT
+        M-->>C: {orderId, totalAmount, lowStockMenuIds}
+        C-->>UI: 201 Created
+        UI->>R: GET /api/orders/:orderId
+        R-->>UI: ข้อมูลใบเสร็จ
+        UI-->>S: แสดงใบเสร็จ + แจ้งเตือนวัตถุดิบใกล้หมด
+      end
+    end
+  end
